@@ -172,3 +172,7 @@ cython_debug/
 
 # MacOs file
 .DS_Store
+
+# Dirs
+data
+models
