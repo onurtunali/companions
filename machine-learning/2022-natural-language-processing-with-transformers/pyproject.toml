@@ -12,6 +12,7 @@ dependencies = [
     "pandas>=2.2.3",
     "polars>=1.21.0",
     "seaborn>=0.13.2",
+    "tensorboard>=2.18.0",
     "torch>=2.5.1",
     "transformers>=4.48.1",
     "umap-learn>=0.5.7",
