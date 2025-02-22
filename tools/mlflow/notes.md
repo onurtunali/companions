@@ -1,14 +1,35 @@
 # MLFlow Notes
 
-MLFlow is a machine learning model tracking tool with comprehensive API integration with popular ML libraries such as scikit-lern, pytorch, keras etc. These are various notes and practices not obvious or included in documentation.
+MLFlow is a machine learning model tracking tool with comprehensive API integration with popular ML libraries such as scikit-lern, pytorch, keras etc. MLFlow modules specific to different stakeholders are shown below.
+
+![](https://mlflow.org/docs/latest/_images/mlflow-overview.png)
+
+These are various notes and practices not obvious or included in documentation.
+
+## MLFlow Deployment
+
+Easiest way to deploy an MLFlow instance is locally. This can only be used for individual development. Since any other production level MLFlow would have a database and artifact store, it's good practice to mimic the same approach locally as well.
+
+```sh
+uv tool install mlflow
+uv tool run mlflow server --backend-store-uri sqlite:////Users/<user_name>/platforms/mlflow/sqlite.db --default-artifact-root /Users/<user_name>/platform/mlflow/mlflow_artifacts --host 0.0.0.0 --port 5000
+```
+
+Deleting expreiments or runs from UI does not clean artifacts and db records. For this purpose, MLFlow development team added a manual garbage collection approach. Run the following command for clean-up.
+
+```sh
+uv tool runmlflow gc  --backend-store-uri sqlite:////Users/<user_name>/platforms/mlflow/sqlite.db --artifact-destination /Users/<user_name>/platform/mlflow/mlflow_artifacts --host 0.0.0.0 --port 5000
+```
+
+## Best practices
 
 MLflow `input_log` method logs the dataset information and metada however, it does NOT track the dataset itself.
 
-```json
-// Ask MLFlow Answer:
+```python
+# Ask MLFlow Answer:
 {
-"prompt":" Does MLflow store the actual dataset when dataset is logged?",
-"Answer": "It seems likely that MLflow does not store the actual dataset when it is logged. Instead, MLflow logs metadata about the dataset, such as its name, digest (hash), schema, and source. This metadata is used to track the dataset's usage in experiments and runs. The actual data remains in its original location, and MLflow records a reference to it. This approach allows for efficient tracking without duplicating large datasets. Would you like more detail on how MLflow handles dataset logging?"
+    "prompt":" Does MLflow store the actual dataset when dataset is logged?",
+    "Answer": "It seems likely that MLflow does not store the actual dataset when it is logged. Instead, MLflow logs metadata about the dataset, such as its name, digest (hash), schema, and source. This metadata is used to track the dataset's usage in experiments and runs. The actual data remains in its original location, and MLflow records a reference to it. This approach allows for efficient tracking without duplicating large datasets. Would you like more detail on how MLflow handles dataset logging?"
 }
 ```
 
@@ -25,3 +46,20 @@ sources https://github.com/mlflow/mlflow/issues/12916"
 ```
 
 To track `numpy` based datasets with `mlflow.data.from_numpy`, features array should have `flatten` method for infering dataset shape. For this reason, `scipy` based `csr` matrix data generally generated from sparse feature extraction methods cannot be used. If data can be load into memory, `x.toarray()` can be passed to method, however if dense version of data causes out of memory erro, then it's better to track dataset with a custom tag functionality.
+
+For hyperparameter sweeps, use child runs otherwise expreiment namespace get cluttered pretty quickly.
+
+```python
+import mlflow
+import model
+
+with mlflow.start_run() as parent_run:
+    params = [{"param1": v1, "param2": v2}, ...]
+
+    for p in params:
+        with mlflow.start_run(nested=True) as child_run:
+            model.set_params(p)
+            mlflow.log_params(p)
+```
+
+Definiton of "artifact" is very context dependent regarding machine learning. However, any static file(s) or directory can be tracked with `mlflow.log_artifacs` method.
