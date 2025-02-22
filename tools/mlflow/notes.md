@@ -8,40 +8,56 @@ These are various notes and practices not obvious or included in documentation.
 
 ## MLFlow Deployment
 
-Easiest way to deploy an MLFlow instance is locally. This can only be used for individual development. Since any other production level MLFlow would have a database and artifact store, it's good practice to mimic the same approach locally as well.
+Easiest way to deploy an MLFlow instance is locally. This can only be used for individual development. Since any other production level MLFlow would have a database and artifact store, it's good practice to mimic the same approach locally as well. Chage `<user_name>` with your own.
 
 ```sh
 uv tool install mlflow
-uv tool run mlflow server --backend-store-uri sqlite:////Users/<user_name>/platforms/mlflow/sqlite.db --default-artifact-root /Users/<user_name>/platform/mlflow/mlflow_artifacts --host 0.0.0.0 --port 5000
+uv tool run mlflow server --backend-store-uri sqlite:////Users/<user_name>/platforms/mlflow/mlflow.db --default-artifact-root /Users/<user_name>/platforms/mlflow/mlflow_artifacts --host 0.0.0.0 --port 5000
 ```
 
 Deleting expreiments or runs from UI does not clean artifacts and db records. For this purpose, MLFlow development team added a manual garbage collection approach. Run the following command for clean-up.
 
 ```sh
-uv tool runmlflow gc  --backend-store-uri sqlite:////Users/<user_name>/platforms/mlflow/sqlite.db --artifact-destination /Users/<user_name>/platform/mlflow/mlflow_artifacts --host 0.0.0.0 --port 5000
+uv tool run mlflow gc --backend-store-uri sqlite:////Users/<user_name>/platforms/mlflow/mlflow.db --artifact-destination /Users/<user_name>/platforms/mlflow/mlflow_artifacts --host 0.0.0.0 --port 5000
 ```
 
 ## Best practices
 
 MLflow `input_log` method logs the dataset information and metada however, it does NOT track the dataset itself.
 
-```python
+```
 # Ask MLFlow Answer:
 {
+
     "prompt":" Does MLflow store the actual dataset when dataset is logged?",
-    "Answer": "It seems likely that MLflow does not store the actual dataset when it is logged. Instead, MLflow logs metadata about the dataset, such as its name, digest (hash), schema, and source. This metadata is used to track the dataset's usage in experiments and runs. The actual data remains in its original location, and MLflow records a reference to it. This approach allows for efficient tracking without duplicating large datasets. Would you like more detail on how MLflow handles dataset logging?"
+    "answer": "It seems likely that MLflow does not store the actual dataset 
+    when it is logged. Instead, MLflow logs metadata about the dataset, such 
+    as its name, digest (hash), schema, and source. This metadata is used to 
+    track the dataset's usage in experiments and runs. The actual data remains 
+    in its original location, and MLflow records a reference to it. This approach 
+    allows for efficient tracking without duplicating large datasets. Would you 
+    like more detail on how MLflow handles dataset logging?"
+
 }
 ```
 
 Log system metrics functionality track the resource utilization of the whole host not just the training script.
 
-```json
-// Ask MLFlow Answer:
+```
+# Ask MLFlow Answer:
 {
-"prompt": "When system_metrics_enabled, does MLFlow tracks resource utilization of the training script or the current metrics for the whole system? For example, let's say host has two processes p1 and p2 such that p1 is system operations with 20% cpu utilization and p2 is training script with 50% cpu utilization. Will cpu metrics be 70% indicating the whole cpu utilization or 50% just for the training process?",
-"answer": "MLflow tracks system-wide resource utilization metrics, not specific to the training script. Therefore, in your example, the CPU metrics would indicate 70% utilization, reflecting the total CPU usage of the host system, including both processes p1 and p2. Would you like more details on how MLflow logs system metrics?
 
-sources https://github.com/mlflow/mlflow/issues/12916"
+    "prompt": "When system_metrics_enabled, does MLFlow tracks resource utilization of 
+    the training script or the current metrics for the whole system? For example, let's 
+    say host has two processes p1 and p2 such that p1 is system operations with 20% cpu 
+    utilization and p2 is training script with 50% cpu utilization. Will cpu metrics be 
+    70% indicating the whole cpu utilization or 50% just for the training process?",
+    "answer": "MLflow tracks system-wide resource utilization metrics, not specific to the 
+    training script. Therefore, in your example, the CPU metrics would indicate 70% utilization, 
+    reflecting the total CPU usage of the host system, including both processes p1 and p2. 
+    Would you like more details on how MLflow logs system metrics?
+
+    source https://github.com/mlflow/mlflow/issues/12916"
 }
 ```
 
