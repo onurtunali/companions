@@ -6,7 +6,7 @@ clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
 	find . -type d -name ".ipynb_checkpoints" -delete
-	uv run nb-clean clean *.ipynb
+	uv run nb-clean clean -n *.ipynb
 
 ## Lint
 lint:
