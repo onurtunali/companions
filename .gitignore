@@ -172,3 +172,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# MacOs
+.DS_store
+
+*.pdf
