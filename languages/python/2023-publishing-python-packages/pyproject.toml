@@ -1,0 +1,10 @@
+[project]
+name="Flip"
+version="1.0.0"
+requires-python = ">= 3.10"
+readme = "README.md"
+license = {text = "MIT License"}
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools","wheel","cython"]

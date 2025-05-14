@@ -1,0 +1,9 @@
+name: default
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.10.15
+  - pip=24.2
+  - aiohappyeyeballs=2.4.3
+prefix: /Users/onurtunali/Downloads/publishing_python_packages/venv
