@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+<script src="https://unpkg.com/context-cards/dist/context-cards.js"></script>
+
+{% include head.html %}
+
+<body>
+
+    {% include header.html %}
+
+    <div class="page-content">
+        <div class="wrapper">
+            {{ content }}
+
+            <ul class="post-list">
+                {% for post in site.posts reversed %}
+                <li>
+
+                    <span class="post-meta">{{ post.date | date: "%B %-d, %Y" }} </span>
+                    <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+                    <span class="post-meta"> {{ post.excerpt }}</span>
+
+                </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+    </div>
+
+    {% include footer.html %}
+
+
+</html>
